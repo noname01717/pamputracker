@@ -348,12 +348,11 @@
           <div class="stat-card live" id="card-price">
             <span class="live-badge">LIVE</span>
             <span class="stat-num" id="live-price">&hellip;</span>
-            <span class="stat-label">Price (ETH/token)</span>
+            <span class="stat-label">Price (USD/token)</span>
           </div>
-          <div class="stat-card live" id="card-holders">
-            <span class="live-badge">LIVE</span>
-            <span class="stat-num" id="live-holders">896</span>
-            <span class="stat-label">Holders</span>
+          <div class="stat-card" id="card-holders">
+            <span class="stat-num">1,182</span>
+            <span class="stat-label">Holders &middot; <a href="https://basescan.org/token/0xb2000000000000000000000ee9988edd75453501#balances" target="_blank" rel="noopener" style="color:inherit; text-decoration:underline;">verify on BaseScan &nearr;</a></span>
           </div>
           <div class="stat-card"><span class="stat-num">8,022</span><span class="stat-label">Total transfers</span></div>
           <div class="stat-card"><span class="stat-num">275+</span><span class="stat-label">Real swaps</span></div>
@@ -362,7 +361,7 @@
 
         <div class="section-label">Temperament Assessment</div>
         <div class="bar-row">
-          <div class="bar-top"><span>Community spread (how wide?)</span><span>896 people &mdash; GOOD</span></div>
+          <div class="bar-top"><span>Community spread (how wide?)</span><span>1,182 people &mdash; GOOD</span></div>
           <div class="bar-track"><div class="bar-fill calm" data-width="78"></div></div>
         </div>
         <div class="bar-row">
@@ -422,7 +421,6 @@
   const status = document.getElementById("live-status");
   const refreshBtn = document.getElementById("live-refresh");
   const priceEl = document.getElementById("live-price");
-  const holdersEl = document.getElementById("live-holders");
 
   function setDot(state) {
     dot.className = "live-dot" + (state === "ok" ? " ok" : state === "err" ? " err" : "");
@@ -445,7 +443,7 @@
     return 1 / rawPrice;
   }
 
-  async function fetchLivePrice() {
+  async function fetchLivePriceEth() {
     const data = GET_SLOT0_SELECTOR + POOL_ID.slice(2).padStart(64, "0");
     const result = await rpcCall("eth_call", [{ to: STATE_VIEW, data }, "latest"]);
     const sqrtPriceX96Hex = result.slice(2, 2 + 64);
@@ -453,12 +451,22 @@
     return priceFromSqrtX96(sqrtPriceX96);
   }
 
-  async function fetchHolderCount() {
-    const res = await fetch("https://base.blockscout.com/api/v2/tokens/" + TOKEN);
-    if (!res.ok) throw new Error("Blockscout HTTP " + res.status);
+  async function fetchEthUsd() {
+    const res = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd");
+    if (!res.ok) throw new Error("CoinGecko HTTP " + res.status);
     const data = await res.json();
-    const val = data.holders_count ?? data.holders ?? null;
-    return val !== null ? Number(val) : null;
+    const val = data?.ethereum?.usd;
+    if (typeof val !== "number") throw new Error("Unexpected CoinGecko response");
+    return val;
+  }
+
+  function formatUsd(value) {
+    if (value === 0 || !isFinite(value)) return "$0.00";
+    if (value < 0.01) {
+      // small sub-cent prices: show significant digits instead of a wall of zeros
+      return "$" + value.toPrecision(3);
+    }
+    return "$" + value.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 4 });
   }
 
   async function refresh() {
@@ -466,22 +474,19 @@
     setDot("");
     status.textContent = "Reading Base mainnet…";
 
-    const results = await Promise.allSettled([fetchLivePrice(), fetchHolderCount()]);
-    const [priceResult, holdersResult] = results;
+    const results = await Promise.allSettled([fetchLivePriceEth(), fetchEthUsd()]);
+    const [priceResult, ethUsdResult] = results;
 
     let ok = true;
 
-    if (priceResult.status === "fulfilled") {
-      priceEl.textContent = priceResult.value.toExponential(3);
+    if (priceResult.status === "fulfilled" && ethUsdResult.status === "fulfilled") {
+      const usdPrice = priceResult.value * ethUsdResult.value;
+      priceEl.textContent = formatUsd(usdPrice);
     } else {
       ok = false;
-      console.warn("Price fetch failed:", priceResult.reason);
+      if (priceResult.status === "rejected") console.warn("Price fetch failed:", priceResult.reason);
+      if (ethUsdResult.status === "rejected") console.warn("ETH/USD fetch failed:", ethUsdResult.reason);
     }
-
-    if (holdersResult.status === "fulfilled" && holdersResult.value !== null) {
-      holdersEl.textContent = holdersResult.value.toLocaleString("en-US");
-    }
-    // if holders fetch fails or index not ready, keep the static fallback already in the markup
 
     const now = new Date();
     const timeStr = now.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
