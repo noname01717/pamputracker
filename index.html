@@ -350,8 +350,9 @@
             <span class="stat-num" id="live-price">&hellip;</span>
             <span class="stat-label">Price (USD/token)</span>
           </div>
-          <div class="stat-card" id="card-holders">
-            <span class="stat-num">1,182</span>
+          <div class="stat-card live" id="card-holders">
+            <span class="live-badge">LIVE</span>
+            <span class="stat-num" id="live-holders">1,182</span>
             <span class="stat-label">Holders &middot; <a href="https://basescan.org/token/0xb2000000000000000000000ee9988edd75453501#balances" target="_blank" rel="noopener" style="color:inherit; text-decoration:underline;">verify on BaseScan &nearr;</a></span>
           </div>
           <div class="stat-card"><span class="stat-num">8,022</span><span class="stat-label">Total transfers</span></div>
@@ -421,6 +422,7 @@
   const status = document.getElementById("live-status");
   const refreshBtn = document.getElementById("live-refresh");
   const priceEl = document.getElementById("live-price");
+  const holdersEl = document.getElementById("live-holders");
 
   function setDot(state) {
     dot.className = "live-dot" + (state === "ok" ? " ok" : state === "err" ? " err" : "");
@@ -460,6 +462,14 @@
     return val;
   }
 
+  async function fetchHolderCount() {
+    const res = await fetch("https://base.blockscout.com/api/v2/tokens/" + TOKEN);
+    if (!res.ok) throw new Error("Blockscout HTTP " + res.status);
+    const data = await res.json();
+    const val = data.holders_count ?? data.holders ?? null;
+    return val !== null ? Number(val) : null;
+  }
+
   function formatUsd(value) {
     if (value === 0 || !isFinite(value)) return "$0.00";
     if (value < 0.01) {
@@ -469,13 +479,17 @@
     return "$" + value.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 4 });
   }
 
+  // sanity bounds: Blockscout's indexer can lag/misreport for brand-new B20-standard
+  // tokens, so ignore obviously-wrong values instead of showing them as "live"
+  const HOLDER_SANITY_MIN = 200;
+
   async function refresh() {
     refreshBtn.disabled = true;
     setDot("");
     status.textContent = "Reading Base mainnet…";
 
-    const results = await Promise.allSettled([fetchLivePriceEth(), fetchEthUsd()]);
-    const [priceResult, ethUsdResult] = results;
+    const results = await Promise.allSettled([fetchLivePriceEth(), fetchEthUsd(), fetchHolderCount()]);
+    const [priceResult, ethUsdResult, holdersResult] = results;
 
     let ok = true;
 
@@ -486,6 +500,19 @@
       ok = false;
       if (priceResult.status === "rejected") console.warn("Price fetch failed:", priceResult.reason);
       if (ethUsdResult.status === "rejected") console.warn("ETH/USD fetch failed:", ethUsdResult.reason);
+    }
+
+    if (
+      holdersResult.status === "fulfilled" &&
+      holdersResult.value !== null &&
+      holdersResult.value >= HOLDER_SANITY_MIN
+    ) {
+      holdersEl.textContent = holdersResult.value.toLocaleString("en-US");
+    } else {
+      // keep the last known-good static figure in the markup; don't overwrite with
+      // a suspicious low number from a lagging indexer
+      if (holdersResult.status === "rejected") console.warn("Holder fetch failed:", holdersResult.reason);
+      else console.warn("Holder fetch returned suspicious value:", holdersResult.value);
     }
 
     const now = new Date();
