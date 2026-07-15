@@ -411,7 +411,12 @@
 
 <script>
 (function () {
-  const RPC_URL = "https://mainnet.base.org";
+  const RPC_URLS = [
+    "https://mainnet.base.org",
+    "https://base.llamarpc.com",
+    "https://base-rpc.publicnode.com",
+    "https://1rpc.io/base",
+  ];
   const STATE_VIEW = "0xa3c0c9b65bad0b08107aa264b0f3db444b867a71";
   const POOL_ID = "0x4dc4dcca55db54a443dcea2ba72e9c35898458367f29cbd6c84f74cf94815d2f";
   const TOKEN = "0xb2000000000000000000000ee9988edd75453501";
@@ -426,15 +431,31 @@
     dot.className = "live-dot" + (state === "ok" ? " ok" : state === "err" ? " err" : "");
   }
 
-  async function rpcCall(method, params) {
-    const res = await fetch(RPC_URL, {
+  async function rpcCallOnce(url, method, params) {
+    const res = await fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ jsonrpc: "2.0", id: 1, method, params }),
     });
+    if (!res.ok) throw new Error("HTTP " + res.status + " from " + url);
     const data = await res.json();
     if (data.error) throw new Error(data.error.message);
     return data.result;
+  }
+
+  // try each RPC endpoint in turn — a single public RPC can rate-limit (429)
+  // under normal traffic, so fall back instead of leaving the price stuck
+  async function rpcCall(method, params) {
+    let lastErr;
+    for (const url of RPC_URLS) {
+      try {
+        return await rpcCallOnce(url, method, params);
+      } catch (err) {
+        lastErr = err;
+        console.warn("RPC endpoint failed, trying next:", url, err);
+      }
+    }
+    throw lastErr;
   }
 
   function priceFromSqrtX96(sqrtPriceX96) {
@@ -482,9 +503,15 @@
     if (priceResult.status === "fulfilled" && ethUsdResult.status === "fulfilled") {
       const usdPrice = priceResult.value * ethUsdResult.value;
       priceEl.textContent = formatUsd(usdPrice);
+    } else if (priceResult.status === "fulfilled") {
+      // on-chain price read succeeded but the USD conversion rate didn't —
+      // still show something useful instead of leaving "…" on screen
+      priceEl.textContent = priceResult.value.toExponential(3) + " ETH";
+      ok = false;
+      console.warn("ETH/USD fetch failed, showing ETH price instead:", ethUsdResult.reason);
     } else {
       ok = false;
-      if (priceResult.status === "rejected") console.warn("Price fetch failed:", priceResult.reason);
+      console.warn("Price fetch failed:", priceResult.reason);
       if (ethUsdResult.status === "rejected") console.warn("ETH/USD fetch failed:", ethUsdResult.reason);
     }
 
