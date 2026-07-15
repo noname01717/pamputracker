@@ -8,33 +8,59 @@
 <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Caveat:wght@500;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --kraft: #e8dcc0;
-    --kraft-dark: #d8c7a0;
-    --paper: #f3ecda;
-    --ink: #2b2620;
-    --ink-soft: #5a5245;
+    --kraft: #b7cbff;
+    --kraft-dark: #8fabf5;
+    --paper: #eaf0ff;
+    --ink: #0a1a3c;
+    --ink-soft: #34477a;
     --stamp-red: #b8402c;
-    --stamp-green: #4a6b47;
+    --stamp-green: #2f6b45;
     --stamp-amber: #c98a2b;
-    --line: #b5a67e;
-    --shadow: rgba(43, 38, 32, 0.25);
+    --line: #7c98e0;
+    --shadow: rgba(6, 20, 60, 0.3);
+    --base-blue: #0052ff;
   }
 
   * { box-sizing: border-box; }
 
   body {
     margin: 0;
-    background: var(--kraft);
-    background-image:
-      repeating-linear-gradient(0deg, rgba(0,0,0,0.015) 0px, transparent 1px, transparent 2px),
-      repeating-linear-gradient(90deg, rgba(0,0,0,0.015) 0px, transparent 1px, transparent 2px);
+    background: linear-gradient(160deg, #0a2472 0%, #0052ff 45%, #6f93ff 100%);
+    background-attachment: fixed;
+    position: relative;
     color: var(--ink);
     font-family: 'IBM Plex Sans', sans-serif;
     line-height: 1.5;
     padding: 28px 16px 80px;
   }
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background-image:
+      repeating-linear-gradient(0deg, rgba(255,255,255,0.025) 0px, transparent 1px, transparent 2px),
+      repeating-linear-gradient(90deg, rgba(255,255,255,0.025) 0px, transparent 1px, transparent 2px);
+  }
 
   .folder { max-width: 880px; margin: 0 auto; }
+
+  .base-topbar {
+    max-width: 880px; margin: 0 auto 16px;
+    display: flex; align-items: center; gap: 8px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase;
+    color: #eaf0ff;
+  }
+  .base-topbar svg { width: 20px; height: 20px; flex-shrink: 0; }
+
+  .base-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px; letter-spacing: 0.06em;
+    color: var(--base-blue);
+  }
+  .base-badge svg { width: 14px; height: 14px; flex-shrink: 0; }
 
   .tab-row { display: flex; gap: 6px; margin-bottom: -2px; padding-left: 24px; }
   .tab {
@@ -232,10 +258,18 @@
 </head>
 <body>
 
+<div class="base-topbar">
+  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="12" fill="#ffffff"/><circle cx="12" cy="12" r="9" fill="#0052ff"/></svg>
+  Built on Base
+</div>
+
 <div class="folder">
 
   <div class="tab-row">
-    <div class="tab">B20 / BASE</div>
+    <div class="tab">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="width:11px;height:11px;vertical-align:-1px;margin-right:4px;"><circle cx="12" cy="12" r="12" fill="#0052ff"/></svg>
+      B20 / BASE
+    </div>
     <div class="tab active">CASE NO. 0xB2...5501</div>
   </div>
 
@@ -367,7 +401,10 @@
   </div>
 
   <div class="footnote">
-    <span>Data source: Base mainnet &middot; live RPC + last deep scan</span>
+    <span class="base-badge">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="12" fill="#0052ff"/></svg>
+      Data source: Base mainnet &middot; live RPC + last deep scan
+    </span>
     <span id="footnote-time">Deep scan recorded: Jul 14, 2026</span>
   </div>
 
