@@ -276,11 +276,14 @@
   <div class="case">
     <div class="case-header">
       <div>
-        <p class="case-id">PRE-ADOPTION REVIEW FILE — FILED JUL 14, 2026</p>
+        <p class="case-id">PRE-ADOPTION REVIEW FILE — FILED JUL 14, 2026 &middot; UPDATED JUL 16</p>
         <h1 class="case-title">PAMPU</h1>
         <p class="case-sub">a.k.a. "The Base Cat"</p>
       </div>
-      <div class="stamp">VERIFIED<br>ON-CHAIN</div>
+      <div style="display:flex; flex-direction:column; gap:6px; align-items:flex-end;">
+        <div class="stamp">VERIFIED<br>ON-CHAIN</div>
+        <div class="stamp" style="border-color:var(--stamp-green); color:var(--stamp-green); transform:rotate(3deg);">RISK<br>LOW</div>
+      </div>
     </div>
 
     <div class="live-strip">
@@ -306,7 +309,7 @@
           <dt>Date of Birth</dt>
           <dd>Jul 10, 2026, 06:10 UTC</dd>
           <dt>Time in Shelter</dt>
-          <dd>5 days</dd>
+          <dd>6 days</dd>
           <dt>Total Population</dt>
           <dd>1,000,000,000 PAMPU</dd>
         </dl>
@@ -331,14 +334,21 @@
             <div class="box pass">&#10003;</div>
             <div>
               <span class="check-label">Liquidity is real and active</span>
-              <span class="check-note">13.17% of supply locked in the pool &mdash; the tick range covers the current price, not an empty shell.</span>
+              <span class="check-note">6.18% of supply locked in the pool &mdash; the tick range covers the current price, not an empty shell.</span>
             </div>
           </li>
           <li>
             <div class="box pass">&#10003;</div>
             <div>
               <span class="check-label">Organic trading volume present</span>
-              <span class="check-note">275+ real swaps, spread across a wide window &mdash; not the fingerprint of a single wallet or bot.</span>
+              <span class="check-note">11,368+ real swaps, spread across a wide window &mdash; not the fingerprint of a single wallet or bot.</span>
+            </div>
+          </li>
+          <li>
+            <div class="box pass">&#10003;</div>
+            <div>
+              <span class="check-label">Whale concentration has normalized</span>
+              <span class="check-note">Largest non-pool holder down to 4.84% of circulating supply, from 10.72% on Jul 14 &mdash; supply is spreading, not consolidating.</span>
             </div>
           </li>
         </ul>
@@ -351,41 +361,42 @@
             <span class="stat-label">Price (USD/token)</span>
           </div>
           <div class="stat-card" id="card-holders">
-            <span class="stat-num" id="live-holders">1,178</span>
-            <span class="stat-label">Holders (as of Jul 15) &middot; <a href="https://basescan.org/token/0xb2000000000000000000000ee9988edd75453501#balances" target="_blank" rel="noopener" style="color:inherit; text-decoration:underline;">verify on BaseScan &nearr;</a></span>
+            <span class="stat-num" id="live-holders">1,565</span>
+            <span class="stat-label">Holders (as of Jul 16) &middot; <a href="https://basescan.org/token/0xb2000000000000000000000ee9988edd75453501#balances" target="_blank" rel="noopener" style="color:inherit; text-decoration:underline;">verify on BaseScan &nearr;</a></span>
           </div>
-          <div class="stat-card"><span class="stat-num">8,022</span><span class="stat-label">Total transfers</span></div>
-          <div class="stat-card"><span class="stat-num">275+</span><span class="stat-label">Real swaps</span></div>
-          <div class="stat-card"><span class="stat-num">86.8%</span><span class="stat-label">Circulating supply</span></div>
+          <div class="stat-card"><span class="stat-num">22,262</span><span class="stat-label">Total transfers</span></div>
+          <div class="stat-card"><span class="stat-num">11,368+</span><span class="stat-label">Real swaps</span></div>
+          <div class="stat-card"><span class="stat-num">93.8%</span><span class="stat-label">Circulating supply</span></div>
+          <div class="stat-card" style="border-color:var(--stamp-green);"><span class="stat-num" style="color:var(--stamp-green);">4.84%</span><span class="stat-label">Top whale &middot; LOW risk</span></div>
         </div>
 
         <div class="section-label">Temperament Assessment</div>
         <div class="bar-row">
-          <div class="bar-top"><span>Community spread (how wide?)</span><span>1,178 people &mdash; GOOD</span></div>
-          <div class="bar-track"><div class="bar-fill calm" data-width="78"></div></div>
+          <div class="bar-top"><span>Community spread (how wide?)</span><span>1,565 people &mdash; GOOD</span></div>
+          <div class="bar-track"><div class="bar-fill calm" data-width="88"></div></div>
         </div>
         <div class="bar-row">
-          <div class="bar-top"><span>Single-wallet risk</span><span>10.72% &mdash; CAUTION</span></div>
-          <div class="bar-track"><div class="bar-fill" data-width="54"></div></div>
+          <div class="bar-top"><span>Single-wallet risk</span><span>4.84% &mdash; LOW</span></div>
+          <div class="bar-track"><div class="bar-fill calm" data-width="20"></div></div>
         </div>
         <div class="bar-row">
-          <div class="bar-top"><span>3-day growth rate</span><span>slowing &mdash; NEUTRAL</span></div>
-          <div class="bar-track"><div class="bar-fill" data-width="22"></div></div>
+          <div class="bar-top"><span>3-day growth rate</span><span>accelerating &mdash; POSITIVE</span></div>
+          <div class="bar-track"><div class="bar-fill calm" data-width="72"></div></div>
         </div>
 
         <div class="section-label">Known Associates (Top Wallets)</div>
         <table class="assoc-table">
           <thead><tr><th>Wallet</th><th>Share</th><th>Note</th></tr></thead>
           <tbody>
-            <tr><td>0x498581...b2b2</td><td>13.17%</td><td><span class="tag pool">Uniswap Pool</span></td></tr>
-            <tr><td>0x733e77...5cb76</td><td>9.31%</td><td><span class="tag watch">Watchlist</span></td></tr>
-            <tr><td>0x28abf2...bc2f</td><td>3.94%</td><td>&mdash;</td></tr>
-            <tr><td>0x1ae477...134d</td><td>3.41%</td><td>&mdash;</td></tr>
-            <tr><td>0x51c768...dba0</td><td>3.19%</td><td>&mdash;</td></tr>
+            <tr><td>0x498581...b2b2</td><td>6.18%</td><td><span class="tag pool">Uniswap Pool</span></td></tr>
+            <tr><td>0x5a24dc...197d89</td><td>4.54%</td><td>&mdash;</td></tr>
+            <tr><td>0x28abf2...bc2f</td><td>3.91%</td><td>&mdash;</td></tr>
+            <tr><td>0xeedbb4...1d0db</td><td>3.58%</td><td>&mdash;</td></tr>
+            <tr><td>0x51c768...dba0</td><td>2.77%</td><td>&mdash;</td></tr>
           </tbody>
         </table>
         <p style="font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--ink-soft); margin-top:8px;">
-          Snapshot from our Jul 14 deep scan &middot; <a href="https://basescan.org/token/0xb2000000000000000000000ee9988edd75453501#balances" target="_blank" rel="noopener" style="color:inherit; text-decoration:underline;">view current top holders on BaseScan &nearr;</a>
+          Snapshot from our Jul 16 rescan (22,262 transfers analyzed) &middot; <a href="https://basescan.org/token/0xb2000000000000000000000ee9988edd75453501#balances" target="_blank" rel="noopener" style="color:inherit; text-decoration:underline;">view current top holders on BaseScan &nearr;</a>
         </p>
 
       </div>
@@ -407,7 +418,7 @@
       <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="12" fill="#0052ff"/></svg>
       Data source: Base mainnet &middot; live RPC + last deep scan
     </span>
-    <span id="footnote-time">Deep scan recorded: Jul 14, 2026</span>
+    <span id="footnote-time">Deep scan recorded: Jul 16, 2026</span>
   </div>
 
 </div>
